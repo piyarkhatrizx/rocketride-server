@@ -49,7 +49,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
 
-from .core import CONST_DEFAULT_WEB_CLOUD
+from .core import CONST_DEFAULT_WEB_CLOUD, NotSupportedException
 from .types.deploy import (
     Deployment,
     DeployHistoryResult,
@@ -62,6 +62,7 @@ from .types.pipeline import PipelineConfig
 
 if TYPE_CHECKING:
     from .client import RocketRideClient
+
 
 def _list_args(
     kwargs: dict,
@@ -113,9 +114,7 @@ class DeployApi:
         current_host = (urlparse(uri).hostname or '').rstrip('.')
 
         if current_host == cloud_host:
-            raise RuntimeError(
-                'Deploy operations are not supported on RocketRide Cloud.'
-            )    
+            raise NotSupportedException('Deploy operations are not supported on RocketRide Cloud.')
 
     # =========================================================================
     # PUBLISH — immutable artifact into the org registry

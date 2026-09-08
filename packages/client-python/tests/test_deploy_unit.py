@@ -1,6 +1,7 @@
 import pytest
 
 from rocketride.deploy import DeployApi
+from rocketride.core import NotSupportedException
 
 
 class FakeClient:
@@ -25,10 +26,11 @@ async def test_publish_rejected_on_rocketride_cloud():
     fake = FakeClient('wss://api.rocketride.ai/task/service')
     api = DeployApi(fake)
 
-    with pytest.raises(RuntimeError, match='not supported'):
+    with pytest.raises(NotSupportedException, match='not supported'):
         await api.publish({'project_id': 'test', 'name': 'test'})
 
     assert fake.calls == []
+
 
 @pytest.mark.asyncio
 async def test_deploy_rejected_on_rocketride_cloud():
@@ -83,6 +85,7 @@ async def test_all_deploy_operations_rejected_on_cloud(method, args, kwargs):
 
     assert fake.calls == []
 
+
 @pytest.mark.asyncio
 async def test_publish_allowed_on_self_hosted():
     fake = FakeClient('ws://localhost:5565/task/service')
@@ -99,6 +102,7 @@ async def test_publish_allowed_on_self_hosted():
             },
         )
     ]
+
 
 @pytest.mark.asyncio
 async def test_trailing_dns_dot_cloud_uri_is_rejected():
